@@ -1,25 +1,33 @@
 pipeline {
     agent any
     stages {
-        stage('Clone') {
-            steps {
-                git 'https://github.com/username/repository.git'
-            }
-        }
         stage('Build') {
             steps {
-                sh 'docker build -t my-python-app .'
+                script {
+                    dockerImage = docker.build('flask-app')
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'docker run my-python-app pytest tests/'
+                script {
+                    dockerImage.inside {
+                        sh 'python -m unittest discover -s tests'
+                    }
+                }
             }
         }
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 8080:8080 my-python-app'
+                script {
+                    dockerImage.run('-d -p 5000:5000')
+                }
             }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline finished'
         }
     }
 }

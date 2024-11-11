@@ -1,18 +1,17 @@
-# Step 1: Use official Python image
+# Use the official Python image from the Docker Hub
 FROM python:3.9-slim
 
-# Step 2: Set the working directory inside the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Step 3: Copy the requirements file and install dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Step 4: Copy the application code
-COPY . .
+# Install the dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Step 5: Expose the port where the app will run
-EXPOSE 8080
+# Expose port 5000 (or any other unused port)
+EXPOSE 5000
 
-# Step 6: Define the command to run the app
+# Define the command to run the application
 CMD ["python", "app.py"]
